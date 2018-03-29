@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -31,6 +31,7 @@ def new_item(restaurant_id):
                             restaurant_id = restaurant_id)
         session.add(new_menu_item)
         session.commit()
+        flash("The menu item '%s' was created!" % new_menu_item.name)
         return redirect(url_for('restaurant_menu', restaurant_id = restaurant_id))
     # Handle GET request
     return render_template('new_menu_item.html', restaurant_id = restaurant_id)
@@ -44,6 +45,7 @@ def edit_item(restaurant_id, item_id):
             item_to_edit.name = request.form['name']
         session.add(item_to_edit)
         session.commit()
+        flash("The menu item was renamed to '%s'!" % item_to_edit.name)
         return redirect(url_for('restaurant_menu', restaurant_id = restaurant_id))
     return render_template('edit_menu_item.html', restaurant_id = restaurant_id,
                             item_id = item_id, item_to_edit = item_to_edit)
@@ -55,10 +57,12 @@ def delete_item(restaurant_id, item_id):
     if request.method == 'POST':
         session.delete(item_to_delete)
         session.commit()
+        flash("The menu item '%s' was deleted!" % item_to_delete.name)
         return redirect(url_for('restaurant_menu', restaurant_id = restaurant_id))
     return render_template('delete_menu_item.html', restaurant_id = restaurant_id,
                             item_id = item_id, item_to_delete = item_to_delete)
 
 if __name__ == '__main__':
+    app.secret_key = "insecure_placeholder"
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
