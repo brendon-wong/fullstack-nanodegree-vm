@@ -45,6 +45,19 @@ class MenuItem(Base):
     restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
     restaurant = relationship(Restaurant)
 
+    # Turns class method into class attribute
+    # https://www.blog.pythonlibrary.org/2014/01/20/python-201-properties/
+    @property
+    def serialize(self):
+        # Returns object data in easily serializable format
+        return {
+            'name': self.name,
+            'id': self.id,
+            'course': self.course,
+            'description': self.description,
+            'price': self.price,
+        }
+
 
 ### Configuration: connects to db
 
